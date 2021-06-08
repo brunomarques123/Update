@@ -17,14 +17,16 @@ namespace WebMvc.Controllers
 
         public IActionResult About()
         {
-            ViewData["Message"] = "Your application description page.";
-
+            ViewData["Message"] = "Aprendendo C# na Pratica";
+            ViewData["email"] = "brunomarques@gmail.com";
+            
             return View();
         }
 
         public IActionResult Contact()
         {
             ViewData["Message"] = "Your contact page.";
+            
 
             return View();
         }
