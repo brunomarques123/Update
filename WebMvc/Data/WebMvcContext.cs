@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WebMvc.Models;
 
-namespace WebMvc.Data
+namespace WebMvc.Models
 {
     public class WebMvcContext : DbContext
     {
@@ -16,6 +16,6 @@ namespace WebMvc.Data
 
         public DbSet<Department> Department { get; set; }
         public DbSet<Seller> Seller { get; set; }
-        public DbSet<SalesRecord> SalesRecords { get; set; }
+        public DbSet<SalesRecords> SalesRecords { get; set; }
     }
 }
