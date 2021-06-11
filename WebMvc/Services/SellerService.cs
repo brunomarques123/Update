@@ -10,7 +10,7 @@ namespace WebMvc.Services
     {
         private readonly WebMvcContext _context;
 
-        public SellerService (WebMvcContext context)
+        public SellerService(WebMvcContext context)
         {
             _context = context;
         }
@@ -20,5 +20,10 @@ namespace WebMvc.Services
             return _context.Seller.ToList();
         }
 
+        public void Insert(Seller obj)
+        {
+            _context.Add(obj);
+            _context.SaveChanges();
+        }
     }
 }
