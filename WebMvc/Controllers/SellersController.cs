@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using WebMvc.Models;
@@ -14,51 +15,51 @@ namespace WebMvc.Controllers
     {
         private readonly SellerService _sellerService;
         private readonly DepartmentService _departmentService;
-        
+
         public SellersController(SellerService sellerService, DepartmentService departmentService)
         {
             _sellerService = sellerService;
             _departmentService = departmentService;
         }
-        
+
         public IActionResult Index()//controlado e o Index
         {
             var list = _sellerService.FindAll(); // controlador acessa o Model pega o dado na lista
             return View(list); //retorna na view a list
         }
-    
+
         public IActionResult Create()
         {
             var departments = _departmentService.FindAll();
             var viewModel = new SellerFormViewModel { Departments = departments };
             return View(viewModel);
         }
-    
-       [HttpPost]
-       [ValidateAntiForgeryToken]
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Create(Seller seller)
         {
             _sellerService.Insert(seller);
             return RedirectToAction(nameof(Index));
         }
-    
+
         public IActionResult Delete(int? Id)
         {
             if (Id == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new {message="Id not provided" });
             }
 
-            var obj = _sellerService.FindById(Id.Value); 
+            var obj = _sellerService.FindById(Id.Value);
             if (obj == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id not found" });
             }
 
             return View(obj);
         }
 
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
@@ -66,18 +67,18 @@ namespace WebMvc.Controllers
             _sellerService.Remove(id);
             return RedirectToAction(nameof(Index));
         }
-        
+
         public IActionResult Details(int? id)
         {
-            if(id == null)
+            if (id == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id not provided" });
             }
 
             var obj = _sellerService.FindById(id.Value);
-            if(obj == null)
+            if (obj == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id not found" });
             }
 
             return View(obj);
@@ -88,13 +89,13 @@ namespace WebMvc.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id not provided" });
             }
 
             var obj = _sellerService.FindById(id.Value);
             if (obj == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = "Id not found" });
             }
 
             List<Department> departments = _departmentService.FindAll();
@@ -105,27 +106,40 @@ namespace WebMvc.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit( int id, Seller seller)
+        public IActionResult Edit(int id, Seller seller)
         {
-            if(id != seller.Id)
+            if (id != seller.Id)
             {
-                return BadRequest();
+                return RedirectToAction(nameof(Error), new { message = "Id mismatch" });
             }
             try
             {
                 _sellerService.Update(seller);
                 return RedirectToAction(nameof(Index));
             }
-            catch (NotFoundException)
+            catch (NotFoundException e)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Error), new { message = e.Message });
             }
-            catch (DbConcurrencyException)
+            catch (DbConcurrencyException e)
             {
-                return BadRequest();
+                return RedirectToAction(nameof(Error), new { message = e.Message });
             }
 
         }
-
+        public IActionResult Error(string message)
+        {
+            var viewModel = new ErrorViewModel
+            {
+                Message = message,
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            };
+            return View(viewModel);
+                
+        }
     }
+
+  
+
 }
+
