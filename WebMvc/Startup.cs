@@ -42,8 +42,8 @@ namespace WebMvc
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddDbContext<WebMvcContext>(options =>
-                    options.UseMySql(Configuration.GetConnectionString("WebMvcContext"), Builder =>
-                     Builder.MigrationsAssembly("WebMvc")));
+                    options.UseMySql(Configuration.GetConnectionString("WebMvcContext"), builder =>
+                     builder.MigrationsAssembly("WebMvc")));
 
 
             services.AddScoped<SeedingService>();
